@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require './lib/top_stock_movers_environment'
+TopStockMovers::CLI.new.call
