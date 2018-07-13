@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["christian.thomas.2894@gmail.com"]
 
   spec.summary       = %q{Quick information on the day's top moving stocks}
-  spec.homepage      = "git@github.com:CT43/ChristianThomas-cli-app.git"
+  spec.homepage      = "https://github.com/CT43/ChristianThomas-cli-app"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -34,4 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "pry"
+
+  spec.add_dependency "nokogiri"
 end
