@@ -25,3 +25,21 @@ Ideas
 2. vrx
 
 type in number of stock you want to see more about
+
+
+# to make sure that objects beign added to another are for sure objects and no one can push strings to what you are trying to push objects to
+class Newsletter
+  attr_accessor :articles
+
+  def initialize
+    @articles = []
+  end
+
+def articles
+  @articles.dup.freeze   # this makes it so the only way to add an article is through the add_articles method which then passes it through the article class to make sure - you can't just Newsletter.articles = "string"
+end
+
+def add_articles(article)
+  raise "invalid article" if !article.is_a?(Article)
+end
+end
