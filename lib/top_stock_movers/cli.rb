@@ -3,17 +3,20 @@ class TopStockMovers::CLI
     ## add method for if they want to open stock page to url
     ## ask first question of how they would like to see their stocks organized - after you complete first part of project
   def call
-    puts "Today's Top Stock Movers"
     list_stocks
     menu
     goodbye
   end
 
   def list_stocks
-    puts <<-DOC
-    1. stock 1
-    2. stock 2
-    DOC
+    puts "Today's Top Stock Movers"
+    TopStockMovers::Stocks.scrape_tradingview
+    TopStockMovers::Stocks.all.each.with_index(1) do |stock, i|
+      break if i == 26
+      puts "#{i}. #{stock.ticker_symbol} - #{stock.percent_change} - #{stock.name}"
+    end
+
+
   end
 
   def menu
