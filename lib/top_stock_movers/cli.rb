@@ -27,25 +27,11 @@ class TopStockMovers::CLI
       input = gets.strip.downcase
       if input.to_i > 0
         num = input.to_i - 1
-        puts "Name = #{@stocks[num].name}"
-        puts "Ticker Symbol = #{@stocks[num].ticker_symbol}"
-        puts "Price = #{@stocks[num].price}"
-        puts "Day's price change = +#{@stocks[num].change}"
-        puts "Day's % change = +#{@stocks[num].percent_change}"
-        puts "Rating = #{@stocks[num].rating}"
-        puts "Sector = #{@stocks[num].sector}"
-        puts "Would you like to open this stock's page for more info?(y/n)"
-        input = gets.strip.downcase
-        if input == "y"
-          link = "#{@stocks[num].url}"
-          if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
-            system "start #{link}"
-          elsif RbConfig::CONFIG['host_os'] =~ /darwin/
-            system "open #{link}"
-          elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
-            system "xdg-open #{link}"
-          end
-        end
+        stock_info
+        open_url
+        puts "To review the list again type 'list' or type 'exit' to exit"
+      elsif input == 'list'
+        list_stocks
       else
         puts "Invalid input"
       end
@@ -55,5 +41,33 @@ class TopStockMovers::CLI
   def goodbye
     "Thanks for using top-stock-movers!! Have a good day!"
   end
+
+  def stock_info
+    puts "Name = #{@stocks[num].name}"
+    puts "Ticker Symbol = #{@stocks[num].ticker_symbol}"
+    puts "Price = #{@stocks[num].price}"
+    puts "Day's price change = +#{@stocks[num].change}"
+    puts "Day's % change = +#{@stocks[num].percent_change}"
+    puts "Rating = #{@stocks[num].rating}"
+    puts "Sector = #{@stocks[num].sector}"
+  end
+
+  def open_url
+    puts "Would you like to open this stock's page for more info?(y/n)"
+    input = gets.strip.downcase
+    if input == "y"
+      link = "#{@stocks[num].url}"
+      if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+        system "start #{link}"
+      elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+        system "open #{link}"
+      elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+        system "xdg-open #{link}"
+      end
+    else
+      return
+    end
+  end
+
 
 end
