@@ -18,21 +18,13 @@ class TopStockMovers::Stocks
       stock_info = row.css('td').collect{|td| td.text}
 
       stock.ticker_symbol = stock_info[0].split("\n\t\t\t\t\t\t").reject{|c| c.empty?}[0]
-      stock.name = stock_info[0].split("\n\t\t\t\t\t\t").reject{|c| c.empty?}[1]
+      stock.name = stock_info[0].split("\n\t\t\t\t\t\t").reject{|c| c.empty?}[1].gsub(/INC|CORP|LTD|ETF|PLC|3X|BOND|SPONSORED/, "++").split("++")[0]
       stock.price = "$#{stock_info[1]}"
       stock.percent_change = stock_info[2]
       stock.change = stock_info[3]
       stock.rating = stock_info[4]
       stock.sector = stock_info[10]
-
       @@all << stock
     end
-
-
-
-
-
-
   end
-
 end

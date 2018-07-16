@@ -9,65 +9,50 @@ class TopStockMovers::CLI
   end
 
   def list_stocks
-    puts "Today's Top 25 Stock Movers"
+    puts "Today's Top 20 Stock Movers"
     TopStockMovers::Stocks.scrape_tradingview
     @stocks = TopStockMovers::Stocks.all
     @stocks.each.with_index(1) do |stock, i|
-      break if i == 26
-      puts "#{i}. #{stock.percent_change} - #{stock.ticker_symbol} - #{stock.name}"
+      break if i == 21
+      puts "#{i}. +#{stock.percent_change} - #{stock.ticker_symbol} - #{stock.name}"
     end
-
-
   end
 
   def menu
-    puts "Enter number of Stock you would like more info on, type exit to quit"
-    input = nil
-    while input != "exit"
-      input = gets.strip.downcase
+    puts "Enter number of Stock you would like more info on, type 'list' to list stocks, type exit to quit"
+    input = gets.strip.downcase
       if input.to_i > 0
         num = input.to_i - 1
-        stock_info
-        open_url
-        puts "To review the list again type 'list' or type 'exit' to exit"
+        puts "Name = #{@stocks[num].name} --- #{@stocks[num].ticker_symbol}"
+        puts "Sector = #{@stocks[num].sector}"
+        puts "Rating = #{@stocks[num].rating}"
+        puts "Price = #{@stocks[num].price}"
+        puts "Day's price change = +#{@stocks[num].change}"
+        puts "Day's % change = +#{@stocks[num].percent_change}"
+        puts "Would you like to open this stock's page for more info?(y/n)"
+        input_2 = gets.strip.downcase
+        if input_2 == "y"
+          link = "#{@stocks[num].url}"
+          if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+            system "start #{link}"
+          elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+            system "open #{link}"
+          elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+            system "xdg-open #{link}"
+          end
+        else
+          menu
+        end
       elsif input == 'list'
         list_stocks
+        menu
+      elsif input == 'exit'
       else
-        puts "Invalid input"
+        menu
       end
-    end
   end
 
   def goodbye
-    "Thanks for using top-stock-movers!! Have a good day!"
+    puts "Thanks for using top-stock-movers!! Have a good day!"
   end
-
-  def stock_info
-    puts "Name = #{@stocks[num].name}"
-    puts "Ticker Symbol = #{@stocks[num].ticker_symbol}"
-    puts "Price = #{@stocks[num].price}"
-    puts "Day's price change = +#{@stocks[num].change}"
-    puts "Day's % change = +#{@stocks[num].percent_change}"
-    puts "Rating = #{@stocks[num].rating}"
-    puts "Sector = #{@stocks[num].sector}"
-  end
-
-  def open_url
-    puts "Would you like to open this stock's page for more info?(y/n)"
-    input = gets.strip.downcase
-    if input == "y"
-      link = "#{@stocks[num].url}"
-      if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
-        system "start #{link}"
-      elsif RbConfig::CONFIG['host_os'] =~ /darwin/
-        system "open #{link}"
-      elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
-        system "xdg-open #{link}"
-      end
-    else
-      return
-    end
-  end
-
-
 end
