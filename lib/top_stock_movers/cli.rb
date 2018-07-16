@@ -9,11 +9,12 @@ class TopStockMovers::CLI
   end
 
   def list_stocks
-    puts "Today's Top Stock Movers"
+    puts "Today's Top 25 Stock Movers"
     TopStockMovers::Stocks.scrape_tradingview
-    TopStockMovers::Stocks.all.each.with_index(1) do |stock, i|
+    @stocks = TopStockMovers::Stocks.all
+    @stocks.each.with_index(1) do |stock, i|
       break if i == 26
-      puts "#{i}. #{stock.ticker_symbol} - #{stock.percent_change} - #{stock.name}"
+      puts "#{i}. #{stock.percent_change} - #{stock.ticker_symbol} - #{stock.name}"
     end
 
 
@@ -24,13 +25,15 @@ class TopStockMovers::CLI
     input = nil
     while input != "exit"
       input = gets.strip.downcase
-      case input
-      when "1"
-        puts "info on 1"
-      when "2"
-        puts "info on 2"
-      when "list"
-        list_stocks
+      if input.to_i > 0
+        num = input.to_i - 1
+        puts "Name = #{@stocks[num].name}"
+        puts "Ticker Symbol = #{@stocks[num].ticker_symbol}"
+        puts "Price = #{@stocks[num].price}"
+        puts "Day's price change = +#{@stocks[num].change}"
+        puts "Day's % change = +#{@stocks[num].percent_change}"
+        puts "Rating = #{@stocks[num].rating}"
+        puts "Sector = #{@stocks[num].sector}"
       else
         puts "Invalid input"
       end
