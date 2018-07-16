@@ -34,6 +34,18 @@ class TopStockMovers::CLI
         puts "Day's % change = +#{@stocks[num].percent_change}"
         puts "Rating = #{@stocks[num].rating}"
         puts "Sector = #{@stocks[num].sector}"
+        puts "Would you like to open this stock's page for more info?(y/n)"
+        input = gets.strip.downcase
+        if input == "y"
+          link = "#{@stocks[num].url}"
+          if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+            system "start #{link}"
+          elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+            system "open #{link}"
+          elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+            system "xdg-open #{link}"
+          end
+        end
       else
         puts "Invalid input"
       end

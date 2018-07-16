@@ -24,8 +24,10 @@ class TopStockMovers::Stocks
       stock.change = stock_info[3]
       stock.rating = stock_info[4]
       stock.sector = stock_info[10]
+
       @@all << stock
     end
+
 
 
 
