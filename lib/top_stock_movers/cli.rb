@@ -1,5 +1,7 @@
 class TopStockMovers::CLI
 
+    ## add method for if they want to open stock page to url
+    ## ask first question of how they would like to see their stocks organized - after you complete first part of project
   def call
     puts "Today's Top Stock Movers"
     list_stocks

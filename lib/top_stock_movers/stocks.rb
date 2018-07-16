@@ -1,10 +1,5 @@
 class TopStockMovers::Stocks
-  attr_accessor :name, :price, :movement_percentage, :description
-
-  @@all = []
-
-  def initialize
-  end
+  attr_accessor :ticker_symbol, :name, :price, :movement_percentage, :description, :rating, 
 
 
 end

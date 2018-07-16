@@ -28,6 +28,7 @@ type in number of stock you want to see more about
 
 
 # to make sure that objects beign added to another are for sure objects and no one can push strings to what you are trying to push objects to
+# look into collaborating objects video
 class Newsletter
   attr_accessor :articles
 
