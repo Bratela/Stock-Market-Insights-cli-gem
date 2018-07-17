@@ -7,6 +7,9 @@ class TopStockMovers::CLI
     goodbye
   end
 
+# This Viewing_options class is what is used to allow the program to view the 7 different sorting options
+# from the website and is the information used to populate the first list selection. It also is what is used
+# to provide the most relevant information and sorting options for the list_stocks method.
   class Viewing_options
     attr_accessor :name, :desc, :sorter
 
@@ -44,9 +47,12 @@ class TopStockMovers::CLI
     puts ""
     puts "Today's Top 25 #{@selection.name} stocks"
     puts "------------------------------"
-    #The line below allows me to scrape 7 different url's
+
+    #The line below allows me to scrape 7 different url's by changing the url according to the users selection
     TopStockMovers::Stocks.scrape_tradingview(@selection.name.downcase) if TopStockMovers::Stocks.all == []
     @stocks = TopStockMovers::Stocks.all
+    #This case statement is using the Viewing_options instance originally selected by the user to output
+    #the most relevant data per the selection and sorts accordingly. For example "% change" for Gainers, or "volume" for Active
     case @selection.sorter
     when "percent_change-pos"
       @stocks.sort{|a,b| b.percent_change <=> a.percent_change}.each.with_index(1) do |stock, i|
@@ -82,7 +88,7 @@ class TopStockMovers::CLI
   end
 
   def menu
-    puts "Enter number of Stock you would like more info on, type 'list' to list stocks, type exit to quit"
+    puts "Enter number of Stock you would like more info on, type 'view options' to view the initial sorting options, 'list' to list stocks, or exit to quit"
     input = gets.strip.downcase
     if input.to_i > 0
       num = input.to_i - 1
@@ -111,6 +117,8 @@ class TopStockMovers::CLI
       else
         menu
       end
+    elsif input == 'view options'
+      call
     elsif input == 'list'
       list_stocks
       menu
