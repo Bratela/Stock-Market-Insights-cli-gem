@@ -1,7 +1,5 @@
 class TopStockMovers::CLI
 
-    ## add method for if they want to open stock page to url
-    ## ask first question of how they would like to see their stocks organized - after you complete first part of project
   def call
     list_viewing_options
     list_stocks
@@ -18,9 +16,9 @@ class TopStockMovers::CLI
       @@all
     end
 
-    @@viewing_options = [["Gainers", "Stocks that have increased the most in price", "percent_change"], ["Losers", "Stocks that have lost most of their value", "percent_change"], ["Active" , "Stocks that have been traded the most", "volume"],  ["Most-Volatile", "The volatility of a stock is the fluctuation of price in sany given timeframe", "percent_change"],  ["Overbought", "Stocks that have significantly increased in price due a large demand", "rating"], ["Oversold", "stock prices have decreased substantially", "rating"], ["Large-Cap", "Largest companies by market cap", "market_cap"]]
+    viewing_options = [["Gainers", "Stocks that have increased the most in price", "percent_change-pos"], ["Losers", "Stocks that have lost most of their value", "percent_change-neg"], ["Active" , "Stocks that have been traded the most", "volume"],  ["Most-Volatile", "The volatility of a stock is the fluctuation of price in sany given timeframe", "percent_change-abs"],  ["Overbought", "Stocks that have significantly increased in price due a large demand", "rating"], ["Oversold", "stock prices have decreased substantially", "rating"], ["Large-Cap", "Largest companies by market cap", "market_cap"]]
 
-    @@viewing_options.each do |array|
+    viewing_options.each do |array|
       option = self.new
         option.name = array[0]
         option.desc = array[1]
@@ -29,27 +27,56 @@ class TopStockMovers::CLI
     end
   end
 
-
-  @@selection = nil
+  @selection = nil
 
   def list_viewing_options
-    puts "How would you like to view today's Top Market Movers? please enter corresponding number."
+    puts ""
+    puts "How would you like to view today's Stock Market?? please enter corresponding number"
     puts ""
     Viewing_options.all.each.with_index(1) do |option, i|
       puts "#{i}. #{option.name} -- #{option.desc}"
     end
     input = gets.strip.to_i - 1
-    @@selection = Viewing_options.all[input]
+    @selection = Viewing_options.all[input]
   end
 
   def list_stocks
-    puts "Today's Top #{@@selection.name} stocks"
-    TopStockMovers::Stocks.scrape_tradingview(@@selection.name.downcase)
-    sorter = @@selection.sorter
-    binding.pry
-    @stocks = TopStockMovers::Stocks.all.sort{|stock| stock.sorter}
-    @stocks.each.with_index(1) do |stock, i|
-      puts "#{i}. +#{stock.percent_change} - #{stock.ticker_symbol} - #{stock.name}"
+    puts ""
+    puts "Today's Top 25 #{@selection.name} stocks"
+    puts "------------------------------"
+    TopStockMovers::Stocks.scrape_tradingview(@selection.name.downcase) if TopStockMovers::Stocks.all == []
+    @stocks = TopStockMovers::Stocks.all
+    case @selection.sorter
+    when "percent_change-pos"
+      @stocks.sort{|a,b| b.percent_change <=> a.percent_change}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.percent_change}% - #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
+    when "percent_change-neg"
+      @stocks.sort{|a,b| a.percent_change <=> b.percent_change}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.percent_change}% - #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
+    when "percent_change-abs"
+      @stocks.sort{|a,b| b.percent_change.abs <=> a.percent_change.abs}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.percent_change}% - #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
+    when "volume"
+      @stocks.sort{|a,b| b.volume <=> a.volume}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.volume}M -Vol   #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
+    when "rating"
+      @stocks.sort{|a,b| b.rating <=> a.rating}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.rating} -Rating - #{stock.percent_change}- #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
+    when "market_cap"
+      @stocks.sort{|a,b| b.market_cap <=> a.market_cap}.each.with_index(1) do |stock, i|
+        puts "#{i}. #{stock.market_cap}M  -MktCap- #{stock.ticker_symbol} - #{stock.name}"
+        break if i == 25
+      end
     end
   end
 
@@ -58,15 +85,17 @@ class TopStockMovers::CLI
     input = gets.strip.downcase
     if input.to_i > 0
       num = input.to_i - 1
-      puts "Name = #{@stocks[num].name} --- #{@stocks[num].ticker_symbol}"
-      puts "Sector = #{@stocks[num].sector}"
-      puts "Rating = #{@stocks[num].rating}"
-      puts "Price = #{@stocks[num].price}"
-      puts "Day's price change = +#{@stocks[num].change}"
-      puts "Day's % change = +#{@stocks[num].percent_change}"
-      puts "Volume = #{@stocks.volume}"
-      puts "Market Cap = #{@stocks.market_cap}"
-      puts "Would you like to open this stock's page for more info?(y/n)"
+      puts""
+      puts "#{@stocks[num].name} --- #{@stocks[num].ticker_symbol}"
+      puts "-----------------------------------------------------------------"
+      puts "Sector  =  #{@stocks[num].sector}"
+      puts "Rating  =  #{@stocks[num].rating}"
+      puts "Price   =  $#{@stocks[num].price}"
+      puts "Prc chg =  #{@stocks[num].change}"
+      puts "% chg   =  #{@stocks[num].percent_change}"
+      puts "Volume  =  #{@stocks[num].volume}M"
+      puts "Mkt Cap =  #{@stocks[num].market_cap}M"
+      puts "*** Would you like to open this stock's page for more info?(y/n) ***"
       input_2 = gets.strip.downcase
       if input_2 == "y"
         link = "#{@stocks[num].url}"
@@ -77,6 +106,7 @@ class TopStockMovers::CLI
         elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
           system "xdg-open #{link}"
         end
+        menu
       else
         menu
       end
@@ -90,6 +120,7 @@ class TopStockMovers::CLI
   end
 
   def goodbye
+    puts ""
     puts "Thanks for using top-stock-movers!! Have a good day!"
   end
 end
