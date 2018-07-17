@@ -1,5 +1,5 @@
 class TopStockMovers::Stocks
-  attr_accessor :ticker_symbol, :name, :price, :percent_change, :change, :rating, :sector, :url
+  attr_accessor :ticker_symbol, :name, :price, :percent_change, :change, :rating, :sector, :url, :volume, :market_cap
 
   @@all = []
 
@@ -7,8 +7,8 @@ class TopStockMovers::Stocks
     @@all
   end
 
-  def self.scrape_tradingview
-    doc = Nokogiri::HTML(open("https://www.tradingview.com/markets/stocks-usa/market-movers-gainers/"))
+  def self.scrape_tradingview(category)
+    doc = Nokogiri::HTML(open("https://www.tradingview.com/markets/stocks-usa/market-movers-#{category}/"))
 
     doc.css('body div div#js-category-content div div div div#js-screener-container div table tbody tr').each do |row|
 
@@ -23,6 +23,8 @@ class TopStockMovers::Stocks
       stock.percent_change = stock_info[2]
       stock.change = stock_info[3]
       stock.rating = stock_info[4]
+      stock.volume = stock_info[5]
+      stock.market_cap = stock_info[6]
       stock.sector = stock_info[10]
       @@all << stock
     end
