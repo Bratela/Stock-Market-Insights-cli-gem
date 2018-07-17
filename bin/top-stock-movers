@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "bundler/setup"
-require "top_stock_movers"
+
+require_relative "../lib/top_stock_movers"
 
 TopStockMovers::CLI.new.call
