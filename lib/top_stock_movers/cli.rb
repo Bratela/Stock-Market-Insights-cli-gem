@@ -9,24 +9,46 @@ class TopStockMovers::CLI
     goodbye
   end
 
-  @@viewing_options = {"Gainers" => "Stocks that have increased the most in price", "Losers" => "Stocks that have lost most of their value", "Most-Active" => "Stocks that have been traded the most", "Most-Volatile" =>"The volatility of a stock is the fluctuation of price in any given timeframe", "Overbought" => "Stocks that have significantly increased in price due a large demand are called overbought", "Oversold" => "As opposed to overbought, oversold means that stock prices have decreased substantially.", "Large-Cap" => "Largest companies by market cap"}
+  class Viewing_options
+    attr_accessor :name, :desc, :sorter
+
+    @@all = []
+
+    def self.all
+      @@all
+    end
+
+    @@viewing_options = [["Gainers", "Stocks that have increased the most in price", "percent_change"], ["Losers", "Stocks that have lost most of their value", "percent_change"], ["Active" , "Stocks that have been traded the most", "volume"],  ["Most-Volatile", "The volatility of a stock is the fluctuation of price in sany given timeframe", "percent_change"],  ["Overbought", "Stocks that have significantly increased in price due a large demand", "rating"], ["Oversold", "stock prices have decreased substantially", "rating"], ["Large-Cap", "Largest companies by market cap", "market_cap"]]
+
+    @@viewing_options.each do |array|
+      option = self.new
+        option.name = array[0]
+        option.desc = array[1]
+        option.sorter = array[2]
+        @@all << option
+    end
+  end
+
+
   @@selection = nil
 
   def list_viewing_options
     puts "How would you like to view today's Top Market Movers? please enter corresponding number."
-    @@viewing_options.each_pair.with_index(1) do |view, i|
-      puts "#{i}. #{view[0]} -- #{view[1]}"
+    puts ""
+    Viewing_options.all.each.with_index(1) do |option, i|
+      puts "#{i}. #{option.name} -- #{option.desc}"
     end
     input = gets.strip.to_i - 1
-    @@selection = @@viewing_options.keys[input]
+    @@selection = Viewing_options.all[input]
   end
 
   def list_stocks
-    puts "Today's Top 20 Stock #{{@@selection}} stocks"
-    TopStockMovers::Stocks.scrape_tradingview(@@selection.to_s)
-    @stocks = TopStockMovers::Stocks.all
+    puts "Today's Top #{@@selection.name} stocks"
+    TopStockMovers::Stocks.scrape_tradingview(@@selection.name.downcase)
+    sorter = @@selection.sorter
+    binding.pry
+    @stocks = TopStockMovers::Stocks.all.sort{|stock| stock.sorter}
     @stocks.each.with_index(1) do |stock, i|
-      break if i == 21
       puts "#{i}. +#{stock.percent_change} - #{stock.ticker_symbol} - #{stock.name}"
     end
   end
@@ -42,6 +64,8 @@ class TopStockMovers::CLI
       puts "Price = #{@stocks[num].price}"
       puts "Day's price change = +#{@stocks[num].change}"
       puts "Day's % change = +#{@stocks[num].percent_change}"
+      puts "Volume = #{@stocks.volume}"
+      puts "Market Cap = #{@stocks.market_cap}"
       puts "Would you like to open this stock's page for more info?(y/n)"
       input_2 = gets.strip.downcase
       if input_2 == "y"
