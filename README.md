@@ -1,28 +1,17 @@
 # TopStockMovers
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/top_stock_movers`. To experiment with that code, run `bin/console` for an interactive prompt.
+This Ruby Gem allows you to view the stock market through 7 different sorting options in real time. Each sorting option will give you the most relevant data customized to the sorting option you selected along with the Name and Ticker Symbol of the stock. From this list output you can gather more data on each individual stock as well as visit the stocks web page!
 
-TODO: Delete this and the text above, and describe your gem
+Enjoy!
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'top_stock_movers'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
 
     $ gem install top_stock_movers
 
 ## Usage
+Type the below prompt into your command line & follow the given instructions.
 
-TODO: Write usage instructions here
+    $ top-stock-movers 
 
 ## Development
 
