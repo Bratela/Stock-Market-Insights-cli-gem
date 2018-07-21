@@ -4,30 +4,6 @@ class TopStockMovers::CLI
     list_viewing_options
     list_stocks
     menu
-    goodbye
-  end
-
-# This Viewing_options class is what is used to allow the program to view the 7 different sorting options
-# from the website and is the information used to populate the first list selection. It also is what is used
-# to provide the most relevant information and sorting options for the list_stocks method.
-  class Viewing_options
-    attr_accessor :name, :desc, :sorter
-
-    @@all = []
-
-    def self.all
-      @@all
-    end
-
-    viewing_options = [["Gainers", "Stocks that have increased the most in price", "percent_change-pos"], ["Losers", "Stocks that have lost most of their value", "percent_change-neg"], ["Active" , "Stocks that have been traded the most", "volume"],  ["Most-Volatile", "The fluctuation of price in any given timeframe", "percent_change-abs"],  ["Overbought", "Stocks that significantly increased in price due a large demand", "rating"], ["Oversold", "Stock prices have decreased substantially", "rating"], ["Large-Cap", "Largest companies by market cap", "market_cap"]]
-
-    viewing_options.each do |array|
-      option = self.new
-        option.name = array[0]
-        option.desc = array[1]
-        option.sorter = array[2]
-        @@all << option
-    end
   end
 
   @selection = nil
@@ -36,11 +12,11 @@ class TopStockMovers::CLI
     puts ""
     puts "How would you like to view today's Stock Market?? please enter corresponding number"
     puts ""
-    Viewing_options.all.each.with_index(1) do |option, i|
+    TopStockMovers::Viewing_options.all.each.with_index(1) do |option, i|
       puts "#{i}. #{option.name} -- #{option.desc}"
     end
     input = gets.strip.to_i - 1
-    @selection = Viewing_options.all[input]
+    @selection = TopStockMovers::Viewing_options.all[input]
   end
 
   def list_stocks
@@ -49,8 +25,8 @@ class TopStockMovers::CLI
     puts "------------------------------"
 
     #The line below allows me to scrape 7 different url's by changing the url according to the users selection
-    TopStockMovers::Stocks.scrape_tradingview(@selection.name.downcase) if TopStockMovers::Stocks.all == []
-    @stocks = TopStockMovers::Stocks.all
+    TopStockMovers::Scraper.scrape_tradingview(@selection.name.downcase) if TopStockMovers::Stocks.find_by_category(@selection.name.downcase).length == 0
+    @stocks = TopStockMovers::Stocks.find_by_category(@selection.name.downcase)
     #This case statement is using the Viewing_options instance originally selected by the user to output
     #the most relevant data per the selection and sorts accordingly. For example "% change" for Gainers, or "volume" for Active
     case @selection.sorter
@@ -123,6 +99,7 @@ class TopStockMovers::CLI
       list_stocks
       menu
     elsif input == 'exit'
+      goodbye
     else
       menu
     end

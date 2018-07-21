@@ -6,9 +6,11 @@ require 'top_stock_movers/version'
 Gem::Specification.new do |spec|
   spec.authors       = ["Christian Thomas"]
   spec.email         = ["christian.thomas.2894@gmail.com"]
-  spec.description   = %q{Movies playing}
-  spec.summary       = %q{Movies playing}
-  spec.homepage      = "https://learn.co"
+  spec.description   = %q{This Ruby Gem allows you to view the stock market through 7 different sorting options in real time. Each sorting option will give you the most relevant data customized to the sorting option you selected along with the Name and Ticker Symbol of the stock. From this list output you can gather more data on each individual stock as well as visit the stocks web page!
+  Type in top-stock-movers in your command line after installing gem to begin!}
+  spec.summary       = %q{This Ruby Gem allows you to view the stock market through 7 different sorting options in real time. Each sorting option will give you the most relevant data customized to the sorting option you selected along with the Name and Ticker Symbol of the stock. From this list output you can gather more data on each individual stock as well as visit the stocks web page!
+  Type in top-stock-movers in your command line after installing gem to begin!}
+  spec.homepage      = "https://github.com/CT43/Stock-Market-Insights-cli-gem"
 
   spec.files         = `git ls-files`.split($\)
   spec.executables   = ["top-stock-movers"]
